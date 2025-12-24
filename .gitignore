@@ -3,9 +3,9 @@
 .env.local
 .env.*.local
 
-# Local tooling (not needed in GitHub)
-local_pc/
+# Local tooling (NOT pushed to GitHub)
 scripts/
+local_pc/
 .github/
 
 # Documentation and meta files
