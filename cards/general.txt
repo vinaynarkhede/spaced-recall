@@ -1,0 +1,3 @@
+# Flashcards
+# Format: ID\tQuestion\tAnswer
+# This file will be populated with generated flashcards

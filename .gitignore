@@ -1,0 +1,43 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Local tooling (not needed in GitHub)
+local_pc/
+scripts/
+.github/
+
+# Documentation and meta files
+content.md
+input.md
+README.md
+sync.json
+sync_log.txt
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.eggs/
+*.egg-info/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
