@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::memory_hierarchy
+QUESTION: Why is it called "Random Access Memory" (RAM)?
+ANSWER: Because you can access any memory location directly by its address, without reading through everything before it (unlike sequential storage like tape). Any address accessible in same amount of time.

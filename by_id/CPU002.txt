@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: Why do computers use binary (0s and 1s) instead of other number systems?
+ANSWER: Binary is physics-based choice for reliability. Distinguishing between two voltage levels (high/low) is noise-resistant. Using 10 different voltage levels would introduce errors. Binary is the most robust way to encode information using electricity.

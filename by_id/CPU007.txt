@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: What are the three types of registers in a CPU?
+ANSWER: 1. General purpose registers: Store data being worked on. 2. Instruction register: Holds current instruction. 3. Program counter (PC): Holds address of next instruction to execute.

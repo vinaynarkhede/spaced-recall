@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: What is a half adder and how does it work?
+ANSWER: A half adder adds two 1-bit numbers using logic gates. Sum = A XOR B. Carry = A AND B. Example: 1+1 → Sum=0, Carry=1 (binary 10). Chain multiple adders to add larger numbers.

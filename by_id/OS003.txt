@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::operating_systems
+QUESTION: What is a context switch?
+ANSWER: When OS switches between processes: saves current process's registers, program counter, and state, then loads another process's saved state. Has overhead but enables multitasking.

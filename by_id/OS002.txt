@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::operating_systems
+QUESTION: What is time-slicing in process management?
+ANSWER: OS divides CPU time among processes — each gets a turn (time slice). Creates illusion of parallel execution on single core. Enables multitasking without dedicated CPU per program.

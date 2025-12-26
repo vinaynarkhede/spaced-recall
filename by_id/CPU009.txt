@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: What is machine code and what is an ISA?
+ANSWER: Machine code is raw binary patterns the CPU directly understands. ISA (Instruction Set Architecture) is the machine code format specific to each CPU architecture (x86, ARM, RISC-V). Programs compiled for one ISA won't run on another.

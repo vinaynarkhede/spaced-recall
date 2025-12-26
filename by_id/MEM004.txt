@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::memory_hierarchy
+QUESTION: How does DRAM store data and why does it need refreshing?
+ANSWER: DRAM stores each bit as charge in a tiny capacitor: charged=1, discharged=0. Capacitors leak charge, so DRAM must be refreshed thousands of times per second — reading each bit and writing it back to prevent data loss.

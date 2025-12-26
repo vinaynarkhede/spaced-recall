@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: What does "3.5 GHz" mean for a CPU?
+ANSWER: The clock generates 3.5 billion pulses per second. Each pulse is an opportunity to do work — synchronizes all CPU operations. Higher frequency = more operations per second (generally).

@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::operating_systems
+QUESTION: What is memory protection and why is it important?
+ANSWER: OS ensures processes can't read/write each other's memory. Prevents bugs in one program from crashing others. Security boundary — malicious code can't access other processes' data.

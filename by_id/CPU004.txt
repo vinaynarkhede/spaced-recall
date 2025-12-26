@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: What is functional completeness and why is NAND gate special?
+ANSWER: Functional completeness means you can build ANY logical function from a set of gates. NAND gate alone is functionally complete — your entire computer could theoretically be built from just NAND gates.

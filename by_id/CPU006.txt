@@ -1,0 +1,3 @@
+DECK: ComputerArchitecture::cpu_fundamentals
+QUESTION: What are the four core components of a CPU?
+ANSWER: 1. ALU (Arithmetic Logic Unit): Math and logic operations. 2. Registers: Ultra-fast storage inside CPU. 3. Control Unit: Reads/decodes instructions, orchestrates operations. 4. Clock: Generates steady pulse synchronizing operations (3.5 GHz = 3.5 billion pulses/sec).

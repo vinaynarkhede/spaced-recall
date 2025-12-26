@@ -1,0 +1,7 @@
+# Operating Systems - First Principles
+OS001	What abstractions does the OS provide over hardware?	Files (instead of raw disk sectors). Process memory (instead of physical RAM addresses). System calls (instead of direct hardware manipulation). Device drivers (instead of knowing every hardware model).
+OS002	What is time-slicing in process management?	OS divides CPU time among processes — each gets a turn (time slice). Creates illusion of parallel execution on single core. Enables multitasking without dedicated CPU per program.
+OS003	What is a context switch?	When OS switches between processes: saves current process's registers, program counter, and state, then loads another process's saved state. Has overhead but enables multitasking.
+OS004	What is memory protection and why is it important?	OS ensures processes can't read/write each other's memory. Prevents bugs in one program from crashing others. Security boundary — malicious code can't access other processes' data.
+OS005	What are the layers of abstraction from code to electrons?	Your Code → Interpreter/Compiler → Operating System → Machine Code (ISA) → Digital Logic (Gates) → Transistors → Physics (Electrons). Each layer hides complexity below.
+OS006	Without an OS, what would your program need to handle directly?	Know exactly how to talk to specific hardware models. Manage which RAM addresses are free. Handle interrupts from every device. Share CPU with other programs. Manage disk sectors directly.
