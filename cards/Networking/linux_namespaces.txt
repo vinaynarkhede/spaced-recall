@@ -1,0 +1,42 @@
+# Linux Network Namespaces - Flashcards
+# Format: ID	Question	Answer
+
+NET001	What is a network interface in Linux?	A "door" through which a computer sends and receives network traffic. Can be physical (eth0, wlan0 - connected to hardware) or virtual (created by software). Linux names them: eth0/eth1 for Ethernet, wlan0 for WiFi, lo for loopback.
+
+NET002	What is the loopback interface (lo) and its IP address?	A special virtual interface that always points back to your own computer. IP: 127.0.0.1 (localhost). Purpose: Allows programs on the same computer to communicate using networking. Packets never leave the computer.
+
+NET003	What are the three major private IP ranges defined by RFC 1918?	10.0.0.0/8 (Class A, 16M addresses - large networks), 172.16.0.0/12 (Class B, 1M addresses - Docker/WSL2), 192.168.0.0/16 (Class C, 65K addresses - home networks). These are free to use, not routable on the internet, and NAT translates them to public IPs.
+
+NET004	What does CIDR notation like /24 mean?	It tells how many bits are the "network" part of the IP address. /24 = first 24 bits are network, remaining 8 bits for hosts = 2^8 = 256 addresses. /16 = 65,536 addresses. /8 = 16,777,216 addresses. Example: 192.168.1.100/24 means network is 192.168.1.x
+
+NET005	What is a routing table and what is the default route?	A routing table is like GPS for network packets - tells the computer "to reach IP X, use door Y". Default route (0.0.0.0/0) is the catch-all rule: "if no other rule matches, send to this gateway (usually your router)".
+
+NET006	What is a gateway in networking?	The "exit door" from your local network to reach other networks (like the internet). Usually your router (e.g., 192.168.1.1). In routing tables, gateway 0.0.0.0 means "directly connected, no gateway needed", any other IP means "send there first".
+
+NET007	What is iptables?	Linux's built-in firewall system. Acts as a security guard: checks every packet coming in/out, follows rules you define, decides to Allow/Block/Modify. Each network namespace has its own iptables rules for isolation.
+
+NET008	What is a network bridge (like docker0)?	A virtual network switch that connects multiple network segments. Docker's bridge: creates a virtual switch inside your computer, connects all containers to it, assigns IPs (172.17.0.x), allows container-to-container communication, connects to host's real network.
+
+NET009	What are ports and why do they exist?	Numbered channels (0-65535) that let multiple programs use the network simultaneously on the same IP. Without ports: one IP = one service. With ports: 192.168.1.100:80 (web), :22 (SSH), :3306 (MySQL). Port binding claims exclusive use of that port.
+
+NET010	What do interface flags like UP, LOWER_UP, LOOPBACK, BROADCAST mean?	UP = interface is enabled. LOWER_UP = physical layer is up (cable plugged in). LOOPBACK = loopback interface. BROADCAST = can send to all devices on network. MULTICAST = can send to group of devices. Missing LOWER_UP with UP means cable unplugged!
+
+NET011	What is a Linux network namespace?	A copy of the entire network stack, isolated from other copies. Each namespace has its own: network interfaces, IP addresses, routing tables, firewall rules (iptables), port bindings. Enables multiple apps to use port 80 without conflict.
+
+NET012	What problem do network namespaces solve?	Without namespaces: only one process can bind to port 80, apps share firewall rules, no IP isolation. With namespaces: each app gets its own isolated network stack, like having separate computers. Foundation of container networking.
+
+NET013	How do you create and manage a Linux network namespace?	Create: sudo ip netns add blue. List: ip netns list. Delete: sudo ip netns delete blue. Execute command inside: sudo ip netns exec blue ip addr. New namespace starts with only loopback (lo) interface, which must be brought up manually.
+
+NET014	What is a veth (virtual ethernet) pair and why is it used?	A virtual cable with two ends. One end goes in namespace A, other in namespace B. Anything sent into one end comes out the other. Used to connect isolated namespaces together. Docker uses veth pairs to connect containers to the docker0 bridge.
+
+NET015	How do you connect two namespaces with veth pairs?	1) Create pair: ip link add veth-blue type veth peer name veth-red. 2) Move ends: ip link set veth-blue netns blue. 3) Assign IPs: ip netns exec blue ip addr add 10.0.0.1/24 dev veth-blue. 4) Bring up: ip link set veth-blue up. 5) Repeat for other namespace.
+
+NET016	What does Docker do when you run a container (networking)?	1) Creates new network namespace. 2) Creates veth pair. 3) Puts one end in container namespace. 4) Puts other end on docker0 bridge. 5) Assigns IP to container (172.17.0.x). Container is isolated but connected to bridge for communication.
+
+NET017	Why can't Docker containers bind to Tailscale IPs on Windows?	Namespace isolation! Container is in its own namespace, Tailscale is in Windows namespace (or WSL2 host namespace). "Cannot assign requested address" error. Solutions: --network host (shares host namespace), -p 8080:80 (bind to 0.0.0.0), or install Tailscale in container's namespace.
+
+NET018	Why can't we join Docker's namespace with Windows' namespace?	Different kernels! Network namespaces are a Linux kernel feature. Windows uses different system (Hyper-V isolation). WSL2 runs a Linux VM - separate from Windows. Docker in WSL2 can't see Windows Tailscale because they're different kernels entirely.
+
+NET019	What is the complete hierarchy of a network call from browser to destination?	1) Application (browser). 2) Socket layer (file descriptor). 3) Transport layer (adds source/dest ports). 4) Network layer (adds source/dest IPs). 5) Routing decision (check routing table). 6) Interface selection. 7) Data link layer (adds MAC addresses). 8) Physical layer (transmits).
+
+NET020	Why is "isolation by default, connection by choice" the namespace principle?	Start with complete isolation (security). Connect only what needs to communicate (functionality). Control exactly how they communicate (firewall rules, routing). This enables container security while allowing necessary communication.

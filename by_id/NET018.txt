@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: Why can't we join Docker's namespace with Windows' namespace?
+ANSWER: Different kernels! Network namespaces are a Linux kernel feature. Windows uses different system (Hyper-V isolation). WSL2 runs a Linux VM - separate from Windows. Docker in WSL2 can't see Windows Tailscale because they're different kernels entirely.

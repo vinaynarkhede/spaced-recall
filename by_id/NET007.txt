@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What is iptables?
+ANSWER: Linux's built-in firewall system. Acts as a security guard: checks every packet coming in/out, follows rules you define, decides to Allow/Block/Modify. Each network namespace has its own iptables rules for isolation.

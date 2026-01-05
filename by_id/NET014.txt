@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What is a veth (virtual ethernet) pair and why is it used?
+ANSWER: A virtual cable with two ends. One end goes in namespace A, other in namespace B. Anything sent into one end comes out the other. Used to connect isolated namespaces together. Docker uses veth pairs to connect containers to the docker0 bridge.

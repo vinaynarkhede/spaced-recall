@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: Why can't Docker containers bind to Tailscale IPs on Windows?
+ANSWER: Namespace isolation! Container is in its own namespace, Tailscale is in Windows namespace (or WSL2 host namespace). "Cannot assign requested address" error. Solutions: --network host (shares host namespace), -p 8080:80 (bind to 0.0.0.0), or install Tailscale in container's namespace.

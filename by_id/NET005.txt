@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What is a routing table and what is the default route?
+ANSWER: A routing table is like GPS for network packets - tells the computer "to reach IP X, use door Y". Default route (0.0.0.0/0) is the catch-all rule: "if no other rule matches, send to this gateway (usually your router)".

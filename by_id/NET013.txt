@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: How do you create and manage a Linux network namespace?
+ANSWER: Create: sudo ip netns add blue. List: ip netns list. Delete: sudo ip netns delete blue. Execute command inside: sudo ip netns exec blue ip addr. New namespace starts with only loopback (lo) interface, which must be brought up manually.

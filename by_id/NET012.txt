@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What problem do network namespaces solve?
+ANSWER: Without namespaces: only one process can bind to port 80, apps share firewall rules, no IP isolation. With namespaces: each app gets its own isolated network stack, like having separate computers. Foundation of container networking.

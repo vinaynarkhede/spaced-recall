@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What does Docker do when you run a container (networking)?
+ANSWER: 1) Creates new network namespace. 2) Creates veth pair. 3) Puts one end in container namespace. 4) Puts other end on docker0 bridge. 5) Assigns IP to container (172.17.0.x). Container is isolated but connected to bridge for communication.

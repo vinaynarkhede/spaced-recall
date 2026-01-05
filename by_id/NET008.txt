@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What is a network bridge (like docker0)?
+ANSWER: A virtual network switch that connects multiple network segments. Docker's bridge: creates a virtual switch inside your computer, connects all containers to it, assigns IPs (172.17.0.x), allows container-to-container communication, connects to host's real network.

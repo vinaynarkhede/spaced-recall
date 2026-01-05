@@ -1,0 +1,3 @@
+DECK: Networking::linux_namespaces
+QUESTION: What is a network interface in Linux?
+ANSWER: A "door" through which a computer sends and receives network traffic. Can be physical (eth0, wlan0 - connected to hardware) or virtual (created by software). Linux names them: eth0/eth1 for Ethernet, wlan0 for WiFi, lo for loopback.
