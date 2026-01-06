@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
 QUESTION: HOW do you create, manage, and execute commands in a network namespace? Provide exact commands.
-ANSWER: CREATING NAMESPACES:
+ANSWER: <b>CREATING NAMESPACES:</b><br>sudo ip netns add blue<br>ip netns list<br>sudo ip netns delete blue<br><br><b>EXECUTING COMMANDS INSIDE:</b><br>sudo ip netns exec blue ip addr<br>sudo ip netns exec blue bash<br><br><b>CONFIGURING A NEW NAMESPACE:</b><br># Create namespace<br>sudo ip netns add blue<br><br># Loopback is DOWN by default, bring it up<br>sudo ip netns exec blue ip link set lo up<br><br># Verify<br>sudo ip netns exec blue ip addr<br><br><b>COMMON DEBUGGING:</b><br># See interfaces<br>sudo ip netns exec blue ip addr<br># See routes<br>sudo ip netns exec blue ip route<br># Check ports<br>sudo ip netns exec blue ss -tulpn<br><br><b>KEY INSIGHT:</b> ip netns exec is like "SSH into" the namespace. Everything after it runs in that isolated network environment.

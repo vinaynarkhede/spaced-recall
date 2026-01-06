@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
 QUESTION: WHAT do interface flags mean? Explain UP, LOWER_UP, LOOPBACK, BROADCAST, MULTICAST.
-ANSWER: WHEN YOU RUN "ip addr":
+ANSWER: <b>WHEN YOU RUN "ip addr":</b><br>eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;<br><br><b>EACH FLAG MEANING:</b><br><br><b>UP:</b> Interface is administratively ENABLED (turned on, not necessarily connected)<br><br><b>LOWER_UP:</b> Physical layer is connected (cable plugged in, WiFi connected)<br><br><b>LOOPBACK:</b> This is the loopback interface (only "lo" has this)<br><br><b>BROADCAST:</b> Can send to all devices on network (e.g., 192.168.1.255)<br><br><b>MULTICAST:</b> Can send/receive multicast packets (streaming, service discovery)<br><br><b>QUICK DIAGNOSIS:</b><br>• &lt;UP,LOWER_UP&gt; ✓ Working<br>• &lt;UP&gt; only ⚠️ Cable unplugged!<br>• Neither ❌ Disabled
