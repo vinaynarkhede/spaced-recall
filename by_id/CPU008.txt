@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::cpu_fundamentals
-QUESTION: Describe the Fetch-Decode-Execute cycle.
-ANSWER: 1. FETCH: Read instruction from memory at address in Program Counter, increment PC. 2. DECODE: Control Unit interprets instruction — what operation, what data, where. 3. EXECUTE: ALU performs operation, results stored. Repeat billions of times per second.

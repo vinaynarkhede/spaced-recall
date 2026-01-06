@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: What is volatile vs non-volatile storage?
-ANSWER: Volatile: Loses data when power removed (RAM, registers, cache). Non-volatile: Retains data without power (HDD, SSD, flash). RAM is fast but temporary; storage is persistent but slower.

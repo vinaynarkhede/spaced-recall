@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::memory_hierarchy
-QUESTION: What is the principle of locality and its two types?
-ANSWER: Temporal Locality: Data accessed now will likely be accessed again soon. Spatial Locality: Data near recently accessed addresses will likely be accessed soon. Caches exploit both — loading cache lines (64 bytes) at once.

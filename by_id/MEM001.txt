@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::memory_hierarchy
-QUESTION: What is a flip-flop and why is it fundamental to memory?
-ANSWER: A flip-flop is the simplest memory element made from logic gates where output loops back to input, creating stable state. Once set, it retains value until actively changed. Foundation of all static memory (SRAM).

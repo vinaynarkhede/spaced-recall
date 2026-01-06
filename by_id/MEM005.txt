@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::memory_hierarchy
-QUESTION: What are the three types of buses connecting CPU to memory?
-ANSWER: 1. Data Bus: Carries actual data (width = data per transfer). 2. Address Bus: Carries memory addresses (32-bit=4GB, 64-bit=16 exabytes). 3. Control Bus: Carries read/write signals, clock, interrupts.

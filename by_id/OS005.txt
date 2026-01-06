@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::operating_systems
-QUESTION: What are the layers of abstraction from code to electrons?
-ANSWER: Your Code → Interpreter/Compiler → Operating System → Machine Code (ISA) → Digital Logic (Gates) → Transistors → Physics (Electrons). Each layer hides complexity below.

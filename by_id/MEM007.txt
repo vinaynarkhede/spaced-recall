@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::memory_hierarchy
-QUESTION: What is cache hit vs cache miss and why does it matter?
-ANSWER: Cache Hit: Data found in cache → fast access. Cache Miss: Data not in cache → must fetch from slower memory. Cache-friendly algorithms can be 10-100x faster than cache-unfriendly ones with same Big-O complexity.

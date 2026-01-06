@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: How do HDDs store data and why are they slow?
-ANSWER: HDDs store data magnetically on spinning platters. Read/write head moves to track. Slow because: 1. Seek time (head moving). 2. Rotational latency (waiting for sector). Mechanical movement = milliseconds = millions of CPU cycles.

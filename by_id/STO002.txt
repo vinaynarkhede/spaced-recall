@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: How do SSDs store data using flash memory?
-ANSWER: SSDs use floating gate transistors — electrons are trapped in a gate to represent 1 or 0. No moving parts = much faster (especially random access). Limited write cycles as electrons degrade oxide layer.

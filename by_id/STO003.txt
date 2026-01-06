@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: What is the speed difference between HDD and SSD for random reads?
-ANSWER: HDD Random Read: 5-10 ms. SSD Random Read: 0.1 ms. SSD is 50-100x faster for random access because no mechanical movement required.

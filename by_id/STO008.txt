@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: What happens when you run a program (storage to execution)?
-ANSWER: 1. Executable on SSD. 2. OS instructs disk controller. 3. DMA transfers bytes to RAM. 4. OS sets up memory (code, data, stack). 5. CPU fetches instructions from RAM. 6. Fetch-Decode-Execute cycle begins.

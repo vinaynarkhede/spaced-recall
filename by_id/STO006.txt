@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: What is Memory-Mapped I/O vs Port-Mapped I/O?
-ANSWER: Memory-Mapped: Devices assigned addresses in same space as memory — simpler, uses same load/store instructions. Port-Mapped: Separate address space with special IN/OUT instructions — more complex, keeps memory space clean.

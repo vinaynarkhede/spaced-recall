@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: What is DMA and why is it important?
-ANSWER: DMA (Direct Memory Access) allows peripherals to transfer data to/from memory without CPU involvement. CPU tells DMA controller: "Transfer 1MB from disk X to memory Y" — controller handles it, freeing CPU. Sends interrupt when done.

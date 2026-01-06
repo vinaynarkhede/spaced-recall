@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::memory_hierarchy
-QUESTION: How much faster is L1 cache compared to RAM?
-ANSWER: L1 cache: 4-5 CPU cycles. RAM: 100+ CPU cycles. L1 is roughly 20-25x faster than RAM. This is why cache is critical for performance.

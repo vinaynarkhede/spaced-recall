@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::operating_systems
-QUESTION: Without an OS, what would your program need to handle directly?
-ANSWER: Know exactly how to talk to specific hardware models. Manage which RAM addresses are free. Handle interrupts from every device. Share CPU with other programs. Manage disk sectors directly.

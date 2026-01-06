@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::operating_systems
-QUESTION: What abstractions does the OS provide over hardware?
-ANSWER: Files (instead of raw disk sectors). Process memory (instead of physical RAM addresses). System calls (instead of direct hardware manipulation). Device drivers (instead of knowing every hardware model).

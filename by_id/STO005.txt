@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::storage_io
-QUESTION: What's the difference between polling and interrupts for I/O?
-ANSWER: Polling: CPU constantly checks "did something happen?" — wasteful, burns CPU cycles. Interrupts: Device sends signal when it needs attention — efficient, CPU does other work until interrupted.

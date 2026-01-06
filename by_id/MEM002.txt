@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::memory_hierarchy
-QUESTION: What is the memory hierarchy and why does it exist?
-ANSWER: Hierarchical design from fastest/smallest to slowest/largest: Registers (1 cycle) → L1 Cache (4-5 cycles) → L2 Cache (10-20 cycles) → L3 Cache (30-50 cycles) → RAM (100+ cycles) → SSD/HDD (100,000+ cycles). Exists because fast memory is expensive, cheap memory is slow.

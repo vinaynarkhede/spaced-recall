@@ -1,3 +1,0 @@
-DECK: ComputerArchitecture::cpu_fundamentals
-QUESTION: What are the five main logic gates and their functions?
-ANSWER: AND: Output 1 only if BOTH inputs are 1. OR: Output 1 if EITHER input is 1. NOT: Flips input (1→0, 0→1). XOR: Output 1 if inputs are DIFFERENT. NAND: NOT AND — universal gate (can build any function).
