@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
-QUESTION: What is the loopback interface (lo) and its IP address?
-ANSWER: A special virtual interface that always points back to your own computer. IP: 127.0.0.1 (localhost). Purpose: Allows programs on the same computer to communicate using networking. Packets never leave the computer.
+QUESTION: WHAT is the loopback interface (lo)? Why does EVERY system have one and what problem does it solve?
+ANSWER: DEFINITION: A virtual interface that always points back to the same computer. IP: 127.0.0.1 (localhost).

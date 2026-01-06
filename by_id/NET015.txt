@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
-QUESTION: How do you connect two namespaces with veth pairs?
-ANSWER: 1) Create pair: ip link add veth-blue type veth peer name veth-red. 2) Move ends: ip link set veth-blue netns blue. 3) Assign IPs: ip netns exec blue ip addr add 10.0.0.1/24 dev veth-blue. 4) Bring up: ip link set veth-blue up. 5) Repeat for other namespace.
+QUESTION: WHAT happens when Docker runs a container? Describe the EXACT network setup steps.
+ANSWER: DOCKER NETWORK SETUP (step by step):

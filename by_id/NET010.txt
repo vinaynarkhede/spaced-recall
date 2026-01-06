@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
-QUESTION: What do interface flags like UP, LOWER_UP, LOOPBACK, BROADCAST mean?
-ANSWER: UP = interface is enabled. LOWER_UP = physical layer is up (cable plugged in). LOOPBACK = loopback interface. BROADCAST = can send to all devices on network. MULTICAST = can send to group of devices. Missing LOWER_UP with UP means cable unplugged!
+QUESTION: WHAT do interface flags mean? Explain UP, LOWER_UP, LOOPBACK, BROADCAST, MULTICAST.
+ANSWER: WHEN YOU RUN "ip addr":

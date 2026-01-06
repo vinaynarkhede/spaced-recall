@@ -1,42 +1,620 @@
-# Linux Network Namespaces - Flashcards
+# Linux Network Namespaces - High Quality Flashcards
 # Format: ID	Question	Answer
+# Following AGENT_README_v2.md first-principles guidelines
 
-NET001	What is a network interface in Linux?	A "door" through which a computer sends and receives network traffic. Can be physical (eth0, wlan0 - connected to hardware) or virtual (created by software). Linux names them: eth0/eth1 for Ethernet, wlan0 for WiFi, lo for loopback.
+NET001	WHY do network interfaces exist in Linux? What problem do they solve?	PROBLEM: A computer needs multiple "doors" to send/receive traffic - one for local communication, others for external networks, VPNs, containers, etc.
 
-NET002	What is the loopback interface (lo) and its IP address?	A special virtual interface that always points back to your own computer. IP: 127.0.0.1 (localhost). Purpose: Allows programs on the same computer to communicate using networking. Packets never leave the computer.
+SOLUTION: Network interfaces are abstracted "doors" for traffic.
 
-NET003	What are the three major private IP ranges defined by RFC 1918?	10.0.0.0/8 (Class A, 16M addresses - large networks), 172.16.0.0/12 (Class B, 1M addresses - Docker/WSL2), 192.168.0.0/16 (Class C, 65K addresses - home networks). These are free to use, not routable on the internet, and NAT translates them to public IPs.
+TWO TYPES:
+• Physical interfaces (eth0, wlan0) - connected to hardware
+• Virtual interfaces (lo, veth, docker0) - created by software
 
-NET004	What does CIDR notation like /24 mean?	It tells how many bits are the "network" part of the IP address. /24 = first 24 bits are network, remaining 8 bits for hosts = 2^8 = 256 addresses. /16 = 65,536 addresses. /8 = 16,777,216 addresses. Example: 192.168.1.100/24 means network is 192.168.1.x
+NAMING CONVENTION:
+• eth0, eth1 = Ethernet (wired)
+• wlan0 = Wireless LAN (WiFi)
+• lo = Loopback (always 127.0.0.1)
 
-NET005	What is a routing table and what is the default route?	A routing table is like GPS for network packets - tells the computer "to reach IP X, use door Y". Default route (0.0.0.0/0) is the catch-all rule: "if no other rule matches, send to this gateway (usually your router)".
+KEY INSIGHT: Interfaces aren't just hardware - they're an ABSTRACTION that lets Linux treat virtual network paths the same as physical ones. This is what makes containers possible.
 
-NET006	What is a gateway in networking?	The "exit door" from your local network to reach other networks (like the internet). Usually your router (e.g., 192.168.1.1). In routing tables, gateway 0.0.0.0 means "directly connected, no gateway needed", any other IP means "send there first".
+NET002	WHAT is the loopback interface (lo)? Why does EVERY system have one and what problem does it solve?	DEFINITION: A virtual interface that always points back to the same computer. IP: 127.0.0.1 (localhost).
 
-NET007	What is iptables?	Linux's built-in firewall system. Acts as a security guard: checks every packet coming in/out, follows rules you define, decides to Allow/Block/Modify. Each network namespace has its own iptables rules for isolation.
+THE PROBLEM IT SOLVES:
+Without loopback: Programs need special IPC code to talk locally
+With loopback: Programs use SAME networking code for local and remote
 
-NET008	What is a network bridge (like docker0)?	A virtual network switch that connects multiple network segments. Docker's bridge: creates a virtual switch inside your computer, connects all containers to it, assigns IPs (172.17.0.x), allows container-to-container communication, connects to host's real network.
+WHY EVERY SYSTEM HAS ONE:
+1. Testing servers without a network
+2. Inter-process communication (database connections)
+3. Services binding to localhost for security
+4. Development (localhost:3000)
 
-NET009	What are ports and why do they exist?	Numbered channels (0-65535) that let multiple programs use the network simultaneously on the same IP. Without ports: one IP = one service. With ports: 192.168.1.100:80 (web), :22 (SSH), :3306 (MySQL). Port binding claims exclusive use of that port.
+KEY DIFFERENCES FROM eth0:
+• lo: Traffic NEVER leaves the computer
+• eth0: Traffic goes to physical network
+• lo: Always 127.0.0.1/8
+• eth0: Assigned IP (e.g., 192.168.1.100)
 
-NET010	What do interface flags like UP, LOWER_UP, LOOPBACK, BROADCAST mean?	UP = interface is enabled. LOWER_UP = physical layer is up (cable plugged in). LOOPBACK = loopback interface. BROADCAST = can send to all devices on network. MULTICAST = can send to group of devices. Missing LOWER_UP with UP means cable unplugged!
+COMMON USE: mysql -h 127.0.0.1 connects via loopback even though MySQL is on same machine.
 
-NET011	What is a Linux network namespace?	A copy of the entire network stack, isolated from other copies. Each namespace has its own: network interfaces, IP addresses, routing tables, firewall rules (iptables), port bindings. Enables multiple apps to use port 80 without conflict.
+NET003	WHAT are the three private IP ranges (RFC 1918)? WHY do they exist and when to use each?	THE THREE RANGES:
 
-NET012	What problem do network namespaces solve?	Without namespaces: only one process can bind to port 80, apps share firewall rules, no IP isolation. With namespaces: each app gets its own isolated network stack, like having separate computers. Foundation of container networking.
+1. 10.0.0.0/8 (Class A)
+   • Size: 16,777,216 addresses
+   • Use: Large enterprises, data centers
+   • Example: 10.0.1.50
 
-NET013	How do you create and manage a Linux network namespace?	Create: sudo ip netns add blue. List: ip netns list. Delete: sudo ip netns delete blue. Execute command inside: sudo ip netns exec blue ip addr. New namespace starts with only loopback (lo) interface, which must be brought up manually.
+2. 172.16.0.0/12 (Class B)
+   • Size: 1,048,576 addresses
+   • Range: 172.16.x.x to 172.31.x.x
+   • Use: Docker, WSL2, VPNs
+   • Example: 172.17.0.2 (Docker container)
 
-NET014	What is a veth (virtual ethernet) pair and why is it used?	A virtual cable with two ends. One end goes in namespace A, other in namespace B. Anything sent into one end comes out the other. Used to connect isolated namespaces together. Docker uses veth pairs to connect containers to the docker0 bridge.
+3. 192.168.0.0/16 (Class C)
+   • Size: 65,536 addresses
+   • Use: Home networks, small offices
+   • Example: 192.168.1.1 (your router)
 
-NET015	How do you connect two namespaces with veth pairs?	1) Create pair: ip link add veth-blue type veth peer name veth-red. 2) Move ends: ip link set veth-blue netns blue. 3) Assign IPs: ip netns exec blue ip addr add 10.0.0.1/24 dev veth-blue. 4) Bring up: ip link set veth-blue up. 5) Repeat for other namespace.
+WHY THEY EXIST (RFC 1918, 1996):
+• Free to use (no registration)
+• Internet routers won't route them (security)
+• Reusable (every home uses 192.168.x.x)
+• NAT translates to public IP when needed
 
-NET016	What does Docker do when you run a container (networking)?	1) Creates new network namespace. 2) Creates veth pair. 3) Puts one end in container namespace. 4) Puts other end on docker0 bridge. 5) Assigns IP to container (172.17.0.x). Container is isolated but connected to bridge for communication.
+KEY INSIGHT: These ranges provide isolation AND allow infinite reuse. Without them, we'd have run out of IPv4 addresses decades ago.
 
-NET017	Why can't Docker containers bind to Tailscale IPs on Windows?	Namespace isolation! Container is in its own namespace, Tailscale is in Windows namespace (or WSL2 host namespace). "Cannot assign requested address" error. Solutions: --network host (shares host namespace), -p 8080:80 (bind to 0.0.0.0), or install Tailscale in container's namespace.
+NET004	HOW does CIDR notation work? Explain /24, /16, /8 and how to calculate available hosts.	CIDR = Classless Inter-Domain Routing
 
-NET018	Why can't we join Docker's namespace with Windows' namespace?	Different kernels! Network namespaces are a Linux kernel feature. Windows uses different system (Hyper-V isolation). WSL2 runs a Linux VM - separate from Windows. Docker in WSL2 can't see Windows Tailscale because they're different kernels entirely.
+THE FORMAT: IP/prefix (e.g., 192.168.1.100/24)
+• The /number = how many bits are the NETWORK portion
+• Remaining bits = HOST portion
 
-NET019	What is the complete hierarchy of a network call from browser to destination?	1) Application (browser). 2) Socket layer (file descriptor). 3) Transport layer (adds source/dest ports). 4) Network layer (adds source/dest IPs). 5) Routing decision (check routing table). 6) Interface selection. 7) Data link layer (adds MAC addresses). 8) Physical layer (transmits).
+CALCULATION:
+• Total bits in IPv4 = 32
+• Host bits = 32 - prefix
+• Available hosts = 2^(host bits) - 2 (minus network & broadcast)
 
-NET020	Why is "isolation by default, connection by choice" the namespace principle?	Start with complete isolation (security). Connect only what needs to communicate (functionality). Control exactly how they communicate (firewall rules, routing). This enables container security while allowing necessary communication.
+COMMON PREFIXES:
+/24 = 256 addresses (254 usable)
+    • Network bits: 24, Host bits: 8
+    • Example: 192.168.1.0/24 = 192.168.1.0-255
+
+/16 = 65,536 addresses
+    • Example: 172.16.0.0/16 = 172.16.0.0-172.16.255.255
+
+/8 = 16,777,216 addresses
+    • Example: 10.0.0.0/8 = 10.0.0.0-10.255.255.255
+
+/32 = 1 address (single host)
+    • Used for: Tailscale, specific routes
+
+HOW TO READ 192.168.1.100/24:
+• Network: 192.168.1 (first 24 bits)
+• Host: 100 (last 8 bits)
+• Range: 192.168.1.0 to 192.168.1.255
+
+NET005	WHAT is a routing table and HOW does the kernel use it to decide where to send packets?	DEFINITION: A set of rules telling the kernel "to reach destination X, send via interface Y through gateway Z."
+
+THE DECISION PROCESS:
+1. Kernel receives outgoing packet for IP X
+2. Scans routing table top-to-bottom
+3. Finds FIRST matching rule (most specific wins)
+4. Sends packet via that interface/gateway
+
+EXAMPLE TABLE:
+Destination      Gateway         Interface
+192.168.1.0/24   0.0.0.0         wlan0    ← local network
+10.0.0.0/8       0.0.0.0         eth0     ← VPN network  
+0.0.0.0/0        192.168.1.1     wlan0    ← default route
+
+SPECIAL ENTRIES:
+• 0.0.0.0/0 = Default route (catch-all)
+• Gateway 0.0.0.0 = "directly connected, no gateway"
+• Gateway with IP = "send to this router first"
+
+TRACE EXAMPLE (visiting google.com):
+1. DNS resolves to 142.250.185.46
+2. Check: matches 192.168.1.0/24? NO
+3. Check: matches 10.0.0.0/8? NO
+4. Check: matches 0.0.0.0/0? YES → use wlan0 via gateway 192.168.1.1
+
+KEY INSIGHT: More specific routes (/24) take precedence over less specific (/0). This is how VPNs work - they add more specific routes.
+
+NET006	WHAT is a gateway? WHY is it needed and what happens when you try to reach an IP outside your network?	DEFINITION: The "exit door" from your local network to reach other networks.
+
+WHY IT'S NEEDED:
+Your computer knows IPs on its local network (e.g., 192.168.1.x)
+But it has NO IDEA how to reach 8.8.8.8 (Google DNS)
+Gateway = "I don't know how to reach this, ask this router"
+
+HOW IT WORKS:
+1. Packet to 142.250.185.46 (google.com)
+2. Routing table: not in local network
+3. Falls to default route: gateway 192.168.1.1
+4. Packet sent to router
+5. Router knows how to forward to internet
+
+IN ROUTING TABLE:
+• Gateway = 0.0.0.0 means "directly connected"
+• Gateway = 192.168.1.1 means "send to this IP first"
+
+EXAMPLE:
+Destination      Gateway         Interface
+192.168.1.0/24   0.0.0.0         wlan0    ← No gateway (local)
+0.0.0.0/0        192.168.1.1     wlan0    ← Use gateway (internet)
+
+KEY INSIGHT: Your home router is your default gateway. Corporate networks may have multiple gateways for different subnets.
+
+NET007	WHAT is iptables? Name its THREE main tables and when each is used.	DEFINITION: Linux's built-in firewall system. A security guard that inspects EVERY packet and decides: allow, block, or modify.
+
+THE THREE MAIN TABLES:
+
+1. FILTER TABLE (default)
+   • Purpose: Accept/drop packets
+   • Chains: INPUT, OUTPUT, FORWARD
+   • Example: Block all SSH (port 22) connections
+   
+2. NAT TABLE
+   • Purpose: Modify source/destination addresses
+   • Chains: PREROUTING, POSTROUTING, OUTPUT
+   • Example: Port forwarding (80 → 8080)
+   
+3. MANGLE TABLE
+   • Purpose: Modify packet headers (TTL, TOS)
+   • Use: QoS, traffic shaping
+   • Rarely used directly
+
+EXAMPLE COMMANDS:
+# Block incoming SSH
+iptables -A INPUT -p tcp --dport 22 -j DROP
+
+# Port forward 80 to 8080
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+WHY NAMESPACES MATTER:
+Each network namespace has its OWN iptables rules!
+Container A can block port 22 while Container B allows it.
+
+KEY INSIGHT: Docker uses iptables NAT table extensively for port mapping (-p 8080:80).
+
+NET008	WHAT is a network bridge (like docker0)? HOW is it different from a router?	DEFINITION: A virtual switch that connects multiple network segments, allowing devices to communicate as if on the same network.
+
+BRIDGE VS ROUTER:
+• Bridge (Layer 2): Connects devices on SAME network using MAC addresses
+• Router (Layer 3): Connects DIFFERENT networks using IP addresses
+
+HOW docker0 BRIDGE WORKS:
+1. Docker creates virtual bridge "docker0" (default 172.17.0.1)
+2. Each container gets a veth pair
+3. One end in container (eth0), other end on docker0
+4. Containers can talk via bridge
+5. Bridge connects to host's real interface for external access
+
+VISUAL:
+Container1 (172.17.0.2) ──┐
+                          ├── docker0 (172.17.0.1) ── eth0 ── internet
+Container2 (172.17.0.3) ──┘
+
+POWER STRIP ANALOGY:
+• Multiple devices plug into it
+• They can all talk to each other
+• Power strip has one plug to wall (external network)
+
+KEY INSIGHT: docker0 is why containers can reach each other using 172.17.0.x IPs and why you can reach containers from the host.
+
+NET009	WHY do ports exist? What's the difference between well-known, registered, and dynamic ports?	THE PROBLEM PORTS SOLVE:
+One IP address, but many applications need to receive traffic.
+Without ports: 192.168.1.100 can only run ONE network service.
+With ports: Same IP serves web (80), SSH (22), database (3306) simultaneously.
+
+PORT RANGES:
+
+WELL-KNOWN (0-1023):
+• Require root/admin to bind
+• 80 = HTTP, 443 = HTTPS
+• 22 = SSH, 25 = SMTP
+• 3306 = MySQL
+
+REGISTERED (1024-49151):
+• Common applications
+• 3000 = Dev servers
+• 5432 = PostgreSQL
+• 8080 = Alternative HTTP
+
+DYNAMIC/EPHEMERAL (49152-65535):
+• Temporary, auto-assigned
+• Client-side source ports
+• OS picks randomly for outgoing connections
+
+PORT BINDING:
+When a program "binds" to port 80, it CLAIMS exclusive use.
+Another program trying port 80 gets: "Address already in use"
+
+WHY NAMESPACES ARE POWERFUL:
+Default namespace: App A on port 80
+Container "blue":  App B on port 80 ✓ No conflict!
+Container "red":   App C on port 80 ✓ No conflict!
+
+NET010	WHAT do interface flags mean? Explain UP, LOWER_UP, LOOPBACK, BROADCAST, MULTICAST.	WHEN YOU RUN "ip addr":
+eth0: <BROADCAST,MULTICAST,UP,LOWER_UP>
+
+EACH FLAG MEANING:
+
+UP:
+• Interface is administratively ENABLED
+• You ran: ip link set eth0 up
+• Does NOT mean connected, just "turned on"
+
+LOWER_UP:
+• Physical layer is connected
+• For eth0: cable is plugged in
+• For wlan0: connected to WiFi
+• For lo: always up (no physical layer)
+
+LOOPBACK:
+• This is the loopback interface
+• Traffic loops back to same machine
+• Only "lo" has this flag
+
+BROADCAST:
+• Can send to all devices on network
+• Example: 192.168.1.255
+• "lo" doesn't have this (nowhere to broadcast)
+
+MULTICAST:
+• Can send/receive multicast packets
+• Used for streaming, service discovery (mDNS)
+
+QUICK DIAGNOSIS:
+eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> ✓ Working
+eth0: <BROADCAST,MULTICAST,UP>           ⚠️ Cable unplugged!
+eth0: <BROADCAST,MULTICAST>              ❌ Disabled
+
+NET011	WHY do Linux network namespaces exist? What specific problem do they solve for containers?	THE PROBLEM:
+On a single Linux system:
+• Only ONE process can bind to port 80
+• All processes share the same routing table
+• All processes share the same firewall rules
+• All processes see the same network interfaces
+
+IMPACT: Can't run multiple isolated network services.
+
+THE SOLUTION - NETWORK NAMESPACES:
+Give each container/app its OWN:
+1. Network interfaces (its own eth0, lo)
+2. IP addresses
+3. Routing tables
+4. Firewall rules (iptables)
+5. Port bindings
+
+RESULT: Each container is like a separate computer, network-wise.
+
+REAL-WORLD EXAMPLE:
+• Container A: nginx on port 80
+• Container B: apache on port 80
+• Container C: python http.server on port 80
+All running simultaneously, no conflict!
+
+KEY INSIGHT: This is THE foundational technology for container networking. Without namespaces, containers couldn't exist as we know them.
+
+RELATED: Docker creates one namespace per container, uses veth pairs to connect them.
+
+NET012	WHAT gets isolated in a network namespace? List ALL 5 components.	COMPLETE ISOLATION LIST:
+
+1. NETWORK INTERFACES
+   • Each namespace has its own eth0, lo, etc.
+   • New namespace starts with ONLY loopback
+   • Must add interfaces via veth pairs
+
+2. IP ADDRESSES
+   • Each namespace has its own IP assignments
+   • 10.0.0.1 in namespace A ≠ 10.0.0.1 in namespace B
+
+3. ROUTING TABLES
+   • Each namespace has its own routing rules
+   • Different default gateways per namespace
+
+4. FIREWALL RULES (iptables)
+   • Each namespace has independent iptables
+   • Container A blocks port 22, Container B allows it
+
+5. PORT BINDINGS
+   • Each namespace has its own port space
+   • Port 80 available independently in each namespace
+
+WHAT IS NOT ISOLATED:
+• Filesystem (separate isolation mechanism)
+• PIDs (separate isolation mechanism)
+• Users (separate isolation mechanism)
+
+KEY INSIGHT: A new namespace is EMPTY - only loopback exists. YOU must configure interfaces, IPs, routes. This is what Docker does automatically.
+
+NET013	HOW do you create, manage, and execute commands in a network namespace? Provide exact commands.	CREATING NAMESPACES:
+
+# Create namespace named "blue"
+sudo ip netns add blue
+
+# List all namespaces
+ip netns list
+
+# Delete namespace
+sudo ip netns delete blue
+
+EXECUTING COMMANDS INSIDE:
+
+# Run command in namespace
+sudo ip netns exec blue ip addr
+
+# Run bash inside namespace
+sudo ip netns exec blue bash
+
+# Then all commands run in that namespace
+
+CONFIGURING A NEW NAMESPACE:
+
+# 1. Create namespace
+sudo ip netns add blue
+
+# 2. Loopback is DOWN by default, bring it up
+sudo ip netns exec blue ip link set lo up
+
+# 3. Verify (now shows 127.0.0.1)
+sudo ip netns exec blue ip addr
+
+COMMON DEBUGGING COMMANDS:
+# See interfaces
+sudo ip netns exec blue ip addr
+
+# See routes
+sudo ip netns exec blue ip route
+
+# Check listening ports
+sudo ip netns exec blue ss -tulpn
+
+KEY INSIGHT: ip netns exec is like "SSH into" the namespace. Everything after it runs in that isolated network environment.
+
+NET014	WHAT is a veth pair? WHY is it needed to connect namespaces?	DEFINITION: A virtual Ethernet pair - like a virtual cable with two ends. Anything sent into one end comes out the other.
+
+WHY IT'S NEEDED:
+Namespaces are ISOLATED by default. There's no path between them. veth pairs CREATE that path - they're the "cable" connecting isolated networks.
+
+HOW IT WORKS:
+1. Create pair: veth-blue <===> veth-red
+2. Put veth-blue in namespace "blue"
+3. Put veth-red in namespace "red"
+4. Assign IPs to each end
+5. Now they can communicate!
+
+COMMANDS:
+# Create pair
+sudo ip link add veth-blue type veth peer name veth-red
+
+# Move to namespaces
+sudo ip link set veth-blue netns blue
+sudo ip link set veth-red netns red
+
+# Configure IPs
+sudo ip netns exec blue ip addr add 10.0.0.1/24 dev veth-blue
+sudo ip netns exec red ip addr add 10.0.0.2/24 dev veth-red
+
+# Bring up
+sudo ip netns exec blue ip link set veth-blue up
+sudo ip netns exec red ip link set veth-red up
+
+# Test
+sudo ip netns exec blue ping 10.0.0.2
+
+DOCKER USAGE: Every container has a veth pair - one end inside container, other end on docker0 bridge.
+
+NET015	WHAT happens when Docker runs a container? Describe the EXACT network setup steps.	DOCKER NETWORK SETUP (step by step):
+
+1. CREATE NETWORK NAMESPACE
+   • Docker creates new namespace for container
+   • Namespace is EMPTY (only loopback exists)
+
+2. CREATE VETH PAIR
+   • One end named eth0 (goes inside container)
+   • Other end gets random name (goes on bridge)
+
+3. MOVE INTERFACE TO CONTAINER
+   • eth0 moved into container's namespace
+
+4. ATTACH TO BRIDGE
+   • Other veth end attached to docker0 bridge
+   • Container can now reach bridge
+
+5. ASSIGN IP ADDRESS
+   • Docker picks IP from bridge subnet (172.17.0.x)
+   • Assigns to container's eth0
+
+6. CONFIGURE ROUTING
+   • Default route: via docker0 gateway (172.17.0.1)
+   • Container can now reach host and internet
+
+RESULT:
+Container: eth0 (172.17.0.2) ─── veth ─── docker0 (172.17.0.1) ─── host eth0 ─── internet
+
+WHY -p 8080:80 WORKS:
+Docker adds iptables NAT rule:
+"Traffic to host:8080 → forward to 172.17.0.2:80"
+
+NET016	WHY can't a container bind to a Tailscale IP? Explain the namespace isolation issue step-by-step.	THE SCENARIO:
+Host has Tailscale: 100.66.197.8
+You try: docker run -p 100.66.197.8:8080:80 nginx
+Error: "Cannot assign requested address"
+
+STEP-BY-STEP WHY IT FAILS:
+
+1. Tailscale creates tailscale0 interface in HOST namespace
+   • Host namespace sees: lo, eth0, tailscale0 ✓
+
+2. Container starts in its OWN namespace
+   • Container sees: lo, eth0 (veth to docker0)
+   • Container does NOT see: tailscale0 ❌
+
+3. Docker tries to bind to 100.66.197.8:8080
+   • Kernel checks: "Do I have interface with 100.66.197.8?"
+   • In container's namespace: NO such interface
+   • Error: Cannot assign requested address
+
+THE RULE:
+You can ONLY bind to IP addresses that exist in YOUR namespace.
+
+SOLUTIONS:
+
+1. --network host (container uses host's namespace)
+   docker run --network host nginx
+   ✓ Now sees tailscale0
+
+2. Bind to 0.0.0.0 (all interfaces - Docker forwards)
+   docker run -p 8080:80 nginx
+   ✓ Accessible via all host IPs including Tailscale
+
+3. Install Tailscale inside container
+   ✓ Tailscale in same namespace as app
+
+NET017	WHY can't Docker Desktop (on Windows/WSL2) access Windows Tailscale? Explain the kernel boundary issue.	THE ARCHITECTURE:
+
+Windows Host (Windows Kernel)
+├── Tailscale Interface: 100.66.197.8 ← HERE
+│
+└── WSL2 (Hyper-V VM - Linux Kernel)
+    ├── Ubuntu Namespace
+    │   └── No tailscale0 interface
+    └── docker-desktop Namespace
+        └── Docker Engine
+        └── ALSO no tailscale0 interface
+
+WHY IT'S IMPOSSIBLE:
+• Network namespaces are a LINUX KERNEL feature
+• Windows uses completely different networking
+• WSL2 is a REAL Linux VM (separate kernel!)
+• You CANNOT "join" namespaces across kernels
+
+THE KEY INSIGHT:
+This isn't just namespace isolation - it's KERNEL BOUNDARY.
+Different operating systems, different network stacks, no direct bridging.
+
+WHAT HAPPENS:
+1. Docker runs in Linux kernel (WSL2)
+2. Tailscale runs in Windows kernel
+3. There's no path between them except WSL2's virtual network
+4. That virtual network doesn't include Tailscale IPs
+
+SOLUTION:
+Install Tailscale INSIDE WSL2:
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+
+Now Tailscale and Docker share the same Linux kernel.
+
+NET018	HOW does a network call flow from application to physical wire? Trace ALL layers.	COMPLETE FLOW (browser to 192.168.1.50:8080):
+
+1. APPLICATION LAYER
+   Browser: "Connect to 192.168.1.50:8080"
+   
+2. SOCKET LAYER
+   Creates socket (file descriptor)
+   Specifies: TCP, destination IP:port
+
+3. TRANSPORT LAYER (TCP/UDP)
+   Adds source port (e.g., 54321)
+   Adds destination port (8080)
+   Creates TCP segment
+
+4. NETWORK LAYER (IP)
+   Adds source IP (your IP)
+   Adds destination IP (192.168.1.50)
+   Creates IP packet
+
+5. ROUTING DECISION
+   Kernel checks routing table:
+   "192.168.1.50 matches 192.168.1.0/24"
+   → Use wlan0, no gateway (direct)
+
+6. INTERFACE SELECTION
+   Packet goes to wlan0 interface
+
+7. DATA LINK LAYER (Ethernet)
+   Adds source MAC (your WiFi card)
+   Adds destination MAC (target's MAC)
+   Creates Ethernet frame
+
+8. PHYSICAL LAYER
+   WiFi card converts to radio signals
+   Transmits over air
+
+FOR LOOPBACK (127.0.0.1):
+Steps 1-5 same, but:
+- Step 5: Route says "use lo interface"
+- Steps 7-8: SKIPPED (no physical transmission)
+- Packet loops back at kernel level
+
+NET019	COMPARE: How would you explain namespaces vs containers vs VMs to someone new?	ISOLATION SPECTRUM (least to most):
+
+PROCESSES (no isolation):
+• Share everything: network, filesystem, memory space
+• One crash can affect others
+• Example: Two Python scripts on same machine
+
+NETWORK NAMESPACES (network isolation only):
+• Isolated: Network stack
+• Shared: Filesystem, CPU, memory
+• Example: ip netns add blue
+
+CONTAINERS (namespace bundle):
+• Isolated: Network + PID + filesystem (overlayfs) + users
+• Shared: Kernel, CPU resources (cgroups limit)
+• Example: docker run nginx
+
+VIRTUAL MACHINES (full isolation):
+• Isolated: EVERYTHING including kernel
+• Own OS, own kernel, own memory
+• Example: VMware, Hyper-V, WSL2
+
+KEY INSIGHT:
+• Namespace = one isolation dimension
+• Container = multiple namespaces bundled (network, pid, mount, etc.)
+• VM = complete isolation but heavier
+
+RULE OF THUMB:
+• Same kernel? → Namespaces possible
+• Different kernel? → Need VM
+• Docker on Windows? → Actually runs in Linux VM (WSL2)
+
+NET020	WHAT is the principle "isolation by default, connection by choice"? How does it apply to container networking?	THE PRINCIPLE:
+Start with COMPLETE isolation (security).
+Connect ONLY what needs to communicate (functionality).
+Control EXACTLY how they communicate (firewall, routing).
+
+APPLICATION TO CONTAINERS:
+
+DEFAULT STATE:
+• Container starts in isolated namespace
+• No connection to host network
+• No connection to other containers
+• Can't be reached from outside
+
+YOU CHOOSE TO CONNECT:
+• -p 8080:80 → Expose specific port to host
+• --network mynet → Join specific Docker network
+• --link db → Connect to specific container
+• --network host → Full network access (least secure)
+
+SECURITY BENEFIT:
+• Container compromise doesn't expose other services
+• Explicit connections = auditable attack surface
+• Different security levels per service:
+
+Frontend Container ──── allowed ──── Backend Container
+         │                                  │
+     (exposed)                          (hidden)
+         │                                  │
+    Internet                        Database Container
+                                           │
+                                       (extra isolated)
+
+KEY INSIGHT: This is why you CAN'T reach a container unless you explicitly expose it. It's a feature, not a bug.
+
+ANTI-PATTERN:
+--network host "for convenience" removes all isolation benefits.

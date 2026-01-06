@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
-QUESTION: What is a gateway in networking?
-ANSWER: The "exit door" from your local network to reach other networks (like the internet). Usually your router (e.g., 192.168.1.1). In routing tables, gateway 0.0.0.0 means "directly connected, no gateway needed", any other IP means "send there first".
+QUESTION: WHAT is a gateway? WHY is it needed and what happens when you try to reach an IP outside your network?
+ANSWER: DEFINITION: The "exit door" from your local network to reach other networks.

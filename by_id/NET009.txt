@@ -1,3 +1,3 @@
 DECK: Networking::linux_namespaces
-QUESTION: What are ports and why do they exist?
-ANSWER: Numbered channels (0-65535) that let multiple programs use the network simultaneously on the same IP. Without ports: one IP = one service. With ports: 192.168.1.100:80 (web), :22 (SSH), :3306 (MySQL). Port binding claims exclusive use of that port.
+QUESTION: WHY do ports exist? What's the difference between well-known, registered, and dynamic ports?
+ANSWER: THE PROBLEM PORTS SOLVE:
